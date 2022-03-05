@@ -23,5 +23,6 @@ as stdin for cmd1                                 as stdout for cmd2
        (end[1] becomes                      (end[0] becomes
         cmd1 stdout)                           cmd2 stdin)
 
-ref. https://csnotes.medium.com/pipex-tutorial-42-project-4469f5dd5901
 ```
+
+[pipex_tutorial](https://csnotes.medium.com/pipex-tutorial-42-project-4469f5dd5901)
