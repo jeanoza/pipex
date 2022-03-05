@@ -2,7 +2,9 @@
 
 ## Resume
 
-> Goal : imitate exactly `pipe` of terminal
+> Goal : imitate exactly `pipe` of terminal.
+
+> hello
 
 ### Theory
 
