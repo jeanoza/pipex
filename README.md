@@ -62,6 +62,16 @@ as stdin for cmd1                                 as stdout for cmd2
 
 - Difference between `>>` and `>`, `<<` and `<` ?
 
+- stdout
+  - `> _FILE_PATH` :
+    - if file exist -> override
+    - if no file -> create
+  - `>> _FILE_PATH` :
+    - if file exist -> add at the finish line
+    - if no file -> create
+- stdin
+  - `< _FILE_PATH`
+
 ### References:
 
 - [pipex-tutorial-42](https://csnotes.medium.com/pipex-tutorial-42-project-4469f5dd5901)
