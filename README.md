@@ -70,7 +70,7 @@ as stdin for cmd1                                 as stdout for cmd2
     - if file exist -> add at the finish line
     - if no file -> create
 - stdin
-  - `< _FILE_PATH`
+  - `< _FILE_PATH` :
 
 ### References:
 
