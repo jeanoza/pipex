@@ -61,126 +61,223 @@ char *strerror(int errnum);
 
     ```
 
-- Args
+  - Environ variable print
 
-  > - av[1] = input path(stdin)
-  > - av[2] = cmd1
-  > - av[3] = cmd2
-  > - av[4] = output path(stdout)
+    ```c
 
-<br/>
-
-- Environ variable print
-
-  ```c
-
-  int main(void)
-  {
-  	char **ptr;
-  	extern char **environ;k
-
-  	ptr = environ;
-  	while (*ptr != 0)
-  	{
-  	printf("ptr:%s\n", *ptr);
-  	++ptr;
-  	}
-  }
-
-  ```
-
-- FORK && PID Example
-
-  ```c
-  //one child && one parent
-  int main()
-  {
-  	int pid;
-  	pid = fork();
-  	if(pid ==0)
-  		printf("[Child] : Hello, world pid=%d\n",getpid());
-  	else
-  		printf("[Parent] : Hello, world pid=%d\n",getpid());
-
-  	//output called : [Parent] -> [Child]
-  	//[Parent] : Hello, world pid=72176
-  	//[Child] : Hello, world pid=72192
-  }
-
-  //multiple children
-  int main()
-  {
-  	int pid1, pid2;
-  	pid1 = fork();
-  	if (pid1 == 0) {
-  		printf("[Child 1] : Hello, world ! pid=%d\n",getpid());
-  		exit(0);
-  	}
-  	pid2 = fork();
-  	if (pid2 == 0) {
-  		printf("[Child 2] : Hello, world ! pid=%d\n",getpid());
-  		exit(0);
-  	}
-  	else {
-  		printf("[Parent]: Hello, world ! pid=%d\n", getpid());
-  		exit(0);
-  	}
-
-  	//output called : [Parent] -> [Child 1] -> [Child 2]....
-  	// [Parent]: Hello, world ! pid=81955
-  	// [Child 1] : Hello, world ! pid=81956
-  	// [Child 2] : Hello, world ! pid=81957
-  }
-
-  //fork wait
-  int main(void)
-  {
-    int pid, child, status;
-    
-    printf("[%d] Parent start\n", getpid());
-    pid = fork();
-    if (pid == 0)
+    int main(void)
     {
-      printf("[%d] Child start\n", getpid());
-      exit(1);
+      char **ptr;
+      extern char **environ;k
+
+      ptr = environ;
+      while (*ptr != 0)
+      {
+      printf("ptr:%s\n", *ptr);
+      ++ptr;
+      }
     }
 
-    child = wait(&status);
-    printf("[%d] Child[%d(status:%d)] end\n", getpid(), child, status);
-    printf("\tCode exit:%d\n", status >> 8);
-  }
-  //[76677] Parent start
-  //[76678] Child start
-  //[76677] Child[76678(status:256)] end
-  //        Code exit:1
+    ```
+
+  - FORK && PID Example
+
+    ```c
+    //one child && one parent
+    int main()
+    {
+      int pid;
+      pid = fork();
+      if(pid ==0)
+        printf("[Child] : Hello, world pid=%d\n",getpid());
+      else
+        printf("[Parent] : Hello, world pid=%d\n",getpid());
+
+      //output called : [Parent] -> [Child]
+      //[Parent] : Hello, world pid=72176
+      //[Child] : Hello, world pid=72192
+    }
+
+    //multiple children
+    int main()
+    {
+      int pid1, pid2;
+      pid1 = fork();
+      if (pid1 == 0) {
+        printf("[Child1] : Hello, world ! pid=%d\n",getpid());
+        exit(0);
+      }
+      pid2 = fork();
+      if (pid2 == 0) {
+        printf("[Child2] : Hello, world ! pid=%d\n",getpid());
+        exit(0);
+      }
+      else {
+        printf("[Parent]: Hello, world ! pid=%d\n", getpid());
+        exit(0);
+      }
+
+      //output called : [Parent] -> [Child 1] -> [Child 2]....
+      // [Parent]: Hello, world ! pid=81955
+      // [Child1] : Hello, world ! pid=81956
+      // [Child2] : Hello, world ! pid=81957
+    }
+
+    //fork wait
+    int main(void)
+    {
+      int pid, child, status;
+      
+      printf("[%d] Parent start\n", getpid());
+      pid = fork();
+      if (pid == 0)
+      {
+        printf("[%d] Child start\n", getpid());
+        exit(1);
+      }
+
+      child = wait(&status);
+      printf("[%d] Child[%d(status:%d)] end\n", getpid(), child, status);
+      printf("\tCode exit:%d\n", status >> 8);
+    }
+    //[76677] Parent start
+    //[76678] Child start
+    //[76677] Child[76678(status:256)] end
+    //        Code exit:1
+    ```
+    
+- File Descriptor
+
+    ```
+                           -----------------    
+                 0         |     stdin     |  
+                           -----------------    
+                 1         |     stdout    |    
+                           -----------------    
+                 2         |     stderr    |  
+                           -----------------
+                 3         |     infile    |  // open()
+                           -----------------
+                 4         |     outfile   |  // open()
+                           -----------------
+                 5         |     end[0]    | 
+                           -----------------
+                 6         |     end[1]    |  
+                           -----------------
+    ```
+    to
+
+    ```
+                           -----------------
+                 0         |     infile *  |  (x stdin closed)
+                           -----------------    
+                 1         |     end[1] *  |  (x stdout closed)
+                           -----------------
+                 2         |     stderr    |  
+                           -----------------
+                 3         |     infile    |  
+                           -----------------
+                 4         |     outfile   |  
+                           -----------------
+                 5         |     end[0]    | 
+                           -----------------
+                 6         |     end[1]    |  
+                           -----------------            *duplicated 
   ```
+### etc...
 
-### To verify
+  - Args
 
-- Difference between `>>` and `>`, `<<` and `<` ?
-- Redirection
-	>- stdout
-	>	- `> _FILE_PATH` :
-	>		- if no file => create
-	>		- else => override
-	>	- `>> _FILE_PATH` :
-	>		- if no file => create
-	>		- else => add at the finish line
-  >
-	>- stdin
-	>	- `< _FILE_PATH` :
-	>		- if no file => Error (ex: zsh: no such file or directory: _FILE_PATH)
-	>		- else => read this._FILE_PATH
-	>	- `<< _KEYWORD` : write inputs until this._KEYWORD called
-  >
-  <br/>cf: `write "Hello world!" and "Bonjour a tous!" then save in 'output'`
-    ```bash
-    <<END cat > output
+    > - av[1] = input path(stdin)
+    > - av[2] = cmd1
+    > - av[3] = cmd2
+    > - av[4] = output path(stdout)
 
-    heredoc> Hello world!
-    heredoc> Bonjour a tous!
-    heredoc> END
+  <br/>
 
+  - Redirection
+    >- stdout
+    >	- `> _FILE_PATH` :
+    >		- if no file => create
+    >		- else => override
+    >	- `>> _FILE_PATH` :
+    >		- if no file => create
+    >		- else => add at the finish line
+    >
+    >- stdin
+    >	- `< _FILE_PATH` :
+    >		- if no file => Error (ex: zsh: no such file or directory: _FILE_PATH)
+    >		- else => read this._FILE_PATH
+    >	- `<< _LIMITER` : write `heredoc>`(here document), until `this._LIMITER` called
+    >
+    <br/>cf: `write "Hello world!" and "Bonjour a tous!" then save in 'output'`
+      ```bash
+      <<END cat > output
+
+      heredoc> Hello world!
+      heredoc> Bonjour a tous!
+      heredoc> END
+
+      ```
+
+  - variable env
+    ```c
+    int main(int ac, char **av, char **env)
+    {
+      (void)ac;
+      (void)av;
+      int	i;
+      i = 0;
+      while (env && env[i])
+      {
+        printf("env[%d]:%s\n", i, env[i]);
+        ++i;
+      }
+      return (0);
+    }
+    /*
+    env[0]:TERM_PROGRAM=vscode
+    env[1]:_P9K_TTY=/dev/ttys001
+    env[2]:TERM=xterm-256color
+    env[3]:SHELL=/bin/zsh
+    env[4]:TMPDIR=/var/folders/zz/zyxvpxvq6csfxvn_n0004yww0017q7/T/
+    env[5]:Apple_PubSub_Socket_Render=/private/tmp/com.apple.launchd.I8RG0ULyuK/Render
+    env[6]:TERM_PROGRAM_VERSION=1.63.2
+    env[7]:TERM_SESSION_ID=w0t0p0:5859BD2F-32C5-4656-BAE5-9F7C7A7EDDEC
+    env[8]:ZSH=/Users/kychoi/.oh-my-zsh
+    env[9]:USER=kychoi
+    env[10]:SSH_AUTH_SOCK=/private/tmp/com.apple.launchd.OF6Xd2rUot/Listeners
+    env[11]:__CF_USER_TEXT_ENCODING=0x9EE7:0x0:0x0
+    env[12]:PAGER=less
+    env[13]:LSCOLORS=Gxfxcxdxbxegedabagacad
+    env[14]:PATH=/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/munki
+    env[15]:PWD=/Users/kychoi/Documents/pipex
+    env[16]:P9K_SSH=0
+    env[17]:P9K_TTY=old
+    env[18]:LANG=en_US.UTF-8
+    env[19]:ITERM_PROFILE=Default
+    env[20]:XPC_FLAGS=0x0
+    env[21]:XPC_SERVICE_NAME=0
+    env[22]:SHLVL=3
+    env[23]:HOME=/Users/kychoi
+    env[24]:COLORFGBG=7;0
+    env[25]:LC_TERMINAL_VERSION=3.4.2
+    env[26]:ITERM_SESSION_ID=w0t0p0:5859BD2F-32C5-4656-BAE5-9F7C7A7EDDEC
+    env[27]:LESS=-R
+    env[28]:LOGNAME=kychoi
+    env[29]:LC_TERMINAL=iTerm2
+    env[30]:DISPLAY=/private/tmp/com.apple.launchd.n13OzKa5Jd/org.macosforge.xquartz:0
+    env[31]:COLORTERM=truecolor
+    env[32]:APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL=true
+    env[33]:ORIGINAL_XDG_CURRENT_DESKTOP=undefined
+    env[34]:VSCODE_GIT_IPC_HANDLE=/var/folders/zz/zyxvpxvq6csfxvn_n0004yww0017q7/T/vscode-git-775b965e9d.sock
+    env[35]:GIT_ASKPASS=/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass.sh
+    env[36]:VSCODE_GIT_ASKPASS_NODE=/Applications/Visual Studio Code.app/Contents/MacOS/Electron
+    env[37]:VSCODE_GIT_ASKPASS_EXTRA_ARGS=--ms-enable-electron-run-as-node
+    env[38]:VSCODE_GIT_ASKPASS_MAIN=/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass-main.js
+    env[39]:OLDPWD=/Users/kychoi/Documents/pipex
+    env[40]:_=/Users/kychoi/Documents/pipex/./pipex
+    */
     ```
 
 		

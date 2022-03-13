@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:43:10 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/13 10:53:41 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/13 17:48:45 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,16 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/wait.h>
+# include <sys/errno.h>
 # include <fcntl.h>
 # include "libft.h"
 
+# define FDS_READ 0
+# define FDS_WRITE 1
+
+typedef struct s_var {
+	int	end[2];
+
+}	t_var;
 
 #endif
