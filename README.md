@@ -39,31 +39,36 @@ char *strerror(int errnum);
 
 ```
 
+
 ### Theory
 
-```txt
-    infile                                             outfile
-as stdin for cmd1                                 as stdout for cmd2
-       |                        PIPE                        ↑
-       |           |---------------------------|            |
-       ↓             |                       |              |
-      cmd1   -->    end[1]       ↔       end[0]   -->     cmd2
-                     |                       |
-            cmd1   |---------------------------|  end[0]
-           output                             reads end[1]
-         is written                          and sends cmd1
-          to end[1]                          output to cmd2
-       (end[1] becomes                      (end[0] becomes
-        cmd1 stdout)                           cmd2 stdin)
+  - Basic Structure
 
-```
+    ```txt
+        infile                                             outfile
+    as stdin for cmd1                                 as stdout for cmd2
+          |                        PIPE                        ↑
+          |           |---------------------------|            |
+          ↓             |                       |              |
+          cmd1   -->    end[1]       ↔       end[0]   -->     cmd2
+                        |                       |
+                cmd1   |---------------------------|  end[0]
+              output                             reads end[1]
+            is written                          and sends cmd1
+              to end[1]                          output to cmd2
+          (end[1] becomes                      (end[0] becomes
+            cmd1 stdout)                           cmd2 stdin)
 
-- ARGS
+    ```
+
+- Args
 
   > - av[1] = input path(stdin)
   > - av[2] = cmd1
   > - av[3] = cmd2
   > - av[4] = output path(stdout)
+
+<br/>
 
 - Environ variable print
 
@@ -126,21 +131,60 @@ as stdin for cmd1                                 as stdout for cmd2
   	// [Child 1] : Hello, world ! pid=81956
   	// [Child 2] : Hello, world ! pid=81957
   }
+
+  //fork wait
+  int main(void)
+  {
+    int pid, child, status;
+    
+    printf("[%d] Parent start\n", getpid());
+    pid = fork();
+    if (pid == 0)
+    {
+      printf("[%d] Child start\n", getpid());
+      exit(1);
+    }
+
+    child = wait(&status);
+    printf("[%d] Child[%d(status:%d)] end\n", getpid(), child, status);
+    printf("\tCode exit:%d\n", status >> 8);
+  }
+  //[76677] Parent start
+  //[76678] Child start
+  //[76677] Child[76678(status:256)] end
+  //        Code exit:1
   ```
 
 ### To verify
 
 - Difference between `>>` and `>`, `<<` and `<` ?
+- Redirection
+	>- stdout
+	>	- `> _FILE_PATH` :
+	>		- if no file => create
+	>		- else => override
+	>	- `>> _FILE_PATH` :
+	>		- if no file => create
+	>		- else => add at the finish line
+  >
+	>- stdin
+	>	- `< _FILE_PATH` :
+	>		- if no file => Error (ex: zsh: no such file or directory: _FILE_PATH)
+	>		- else => read this._FILE_PATH
+	>	- `<< _KEYWORD` : write until this._KEYWORD called
+  >
+  <br/>cf: `write hello world\nbonjour a tous && save in 'output'`
+    ```bash
+    <<\END cat > output
 
-- stdout
-  - `> _FILE_PATH` :
-    - if file exist -> override
-    - if no file -> create
-  - `>> _FILE_PATH` :
-    - if file exist -> add at the finish line
-    - if no file -> create
-- stdin
-  - `< _FILE_PATH` :
+    heredoc> Hello world!
+    heredoc> Bonjour a tous!
+    heredoc> END
+
+    ```
+
+		
+
 
 ### References:
 

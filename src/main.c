@@ -3,35 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kyubongchoi <kyubongchoi@student.42.fr>    +#+  +:+       +#+        */
+/*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/12 08:42:33 by kyubongchoi      ###   ########.fr       */
+/*   Updated: 2022/03/13 11:33:27 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int main()
+int main(void)
 {
-	int pid1, pid2;
-	pid1 = fork();
-	if (pid1 == 0) {
-		printf("[Child 1] : Hello, world ! pid=%d\n",getpid());
-		exit(0);
-	}
-	pid2 = fork();
-	if (pid2 == 0) {
-		printf("[Child 2] : Hello, world ! pid=%d\n",getpid());
-		exit(0);
-	}
-	else {
-		printf("[Parent]: Hello, world ! pid=%d\n", getpid());
-		exit(0);
+	int pid, child, status;
+	
+	printf("[%d] Parent start\n", getpid());
+	pid = fork();
+	if (pid == 0)
+	{
+		printf("[%d] Child start\n", getpid());
+		exit(2);
 	}
 
-	//output called : [Parent] -> [Child 1] -> [Child 2]....
-	// [Parent]: Hello, world ! pid=81955
-	// [Child 1] : Hello, world ! pid=81956
-	// [Child 2] : Hello, world ! pid=81957
+	child = wait(&status);
+	printf("[%d] Child[%d(status:%d)] end\n", getpid(), child, status);
+	printf("\tCode exit:%d\n", status >> 8);
 }
