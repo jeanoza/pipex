@@ -171,11 +171,11 @@ char *strerror(int errnum);
 	>	- `< _FILE_PATH` :
 	>		- if no file => Error (ex: zsh: no such file or directory: _FILE_PATH)
 	>		- else => read this._FILE_PATH
-	>	- `<< _KEYWORD` : write until this._KEYWORD called
+	>	- `<< _KEYWORD` : write inputs until this._KEYWORD called
   >
-  <br/>cf: `write hello world\nbonjour a tous && save in 'output'`
+  <br/>cf: `write "Hello world!" and "Bonjour a tous!" then save in 'output'`
     ```bash
-    <<\END cat > output
+    <<END cat > output
 
     heredoc> Hello world!
     heredoc> Bonjour a tous!
