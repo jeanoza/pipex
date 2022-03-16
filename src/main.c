@@ -6,44 +6,76 @@
 /*   By: kyubongchoi <kyubongchoi@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/15 08:46:28 by kyubongchoi      ###   ########.fr       */
+/*   Updated: 2022/03/16 09:18:48 by kyubongchoi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	child_process(int fd, char *cmd, int *end)
+//TODO:verify make file CFLAG
+
+//FIXME: modify or create ft_strjoin with seperator
+//to add "/" between path and cmd
+
+void	execute(char *cmd, char **env)
+{
+	char	*path_from_env;
+	char	**paths;
+	char	**cmd_av_splitted;
+	char	*new_cmd1;
+	char	*new_cmd2;
+	int		i;
+
+	i = -1;
+	while (env[++i])
+	{
+		if (ft_strncmp("PATH=", env[i], 5) == 0)
+			path_from_env = ft_substr(env[i], 5, ft_strlen(env[i]) - 5);
+	}
+	paths = ft_split(path_from_env, ':');
+	cmd_av_splitted = ft_split(cmd, ' ');
+	free(path_from_env);
+	i = -1;
+	while (paths[++i])
+	{
+		new_cmd1 = ft_strjoin(paths[i], "/");
+		new_cmd2 = ft_strjoin(new_cmd1, cmd_av_splitted[0]);
+		free(new_cmd1);
+		if (execve(new_cmd2, cmd_av_splitted, env) == -1)
+			perror("Error");
+		free(new_cmd2);
+	}
+}
+
+void	child_process(int fd1, char *cmd, int *end, char **av, char **env)
 {
 	(void)cmd;
-
-	//TODO: put protection if dup2() < 0
-	printf("child1:%d\n", dup2(fd, STDIN_FILENO));
-	printf("child2:%d\n", dup2(end[1], STDOUT_FILENO));
-	// if (dup2(fd, STDIN_FILENO) < 0)
-	// 	printf("error\n");
-	// if (dup2(end[1], STDOUT_FILENO) < 0)
-	// 	printf("error2\n");
+	printf("(child) cmd:%s\n", cmd);
+	if (dup2(fd1, STDIN_FILENO) < 0)
+		perror("dup2(fd1, STDIN): ");
+	if (dup2(end[1], STDOUT_FILENO) < 0)
+		perror("dup2(end[1], STDOUT): ");
 	close(end[0]);
-	close(fd);
+	close(fd1);
 	//execve....
 	exit(1);
 }
 
-void	parent_process(int fd, char *cmd, int *end)
+void	parent_process(int fd2, char *cmd, int *end, char **av, char **env)
 {
 	int	status;
 
 	(void)cmd;
-	
-	printf("exec in parent\n");
 
+	printf("(parent) cmd:%s\n", cmd);
 	waitpid(-1, &status, 0);
 
-	printf("exec in parent2\n");
-	dup2(fd, STDOUT_FILENO);
-	dup2(end[0], STDIN_FILENO);
+	if (dup2(fd2, STDOUT_FILENO) < 0)
+		perror("dup2(fd, STDOUT_FILENO): ");
+	if (dup2(end[0], STDIN_FILENO) < 0)
+		perror("dup2(end[0], STDIN_FILENO): ");
 	close(end[1]);
-	close(fd);
+	close(fd2);
 	//execve....
 	exit(1);
 }
@@ -64,31 +96,14 @@ void	pipex(int fd1, int fd2, char **av, char **env)
 	if (pid == -1)
 	{
 		perror("Fork:");
-		return;
+		return ;
 	}
-
-	printf("fd1:%d fd2:%d\n", fd1, fd2);
 
 	if (pid == 0) //if success fork(), operation in child process
-	{
-		//TODO: put protection if dup2() < 0
-		printf("child:\n");
-		if (dup2(fd1, STDIN_FILENO) < 0)
-			printf("error\n");
-		printf("child1\n");
-		if (dup2(end[1], STDOUT_FILENO) < 0)
-			printf("error2\n");
-		printf("child2\n");
-		close(end[0]);
-		close(fd1);
-		//execve....
-		exit(1);
-	}
-	else {
-		printf("parent\n");
-		parent_process(fd2, av[3], end);
-	}
+		child_process(fd1, av[2], end, av, env);
+	parent_process(fd2, av[3], end, av, env);
 }
+
 
 int	main(int ac, char **av, char **env)
 {
@@ -99,8 +114,11 @@ int	main(int ac, char **av, char **env)
 	(void)av;
 	(void)env;
 
+	execute("ls -al", env);
+
+
 	fd1 = open(av[1], O_RDONLY);
-	fd2 = open(av[1], O_CREAT | O_RDWR | O_TRUNC, 0644);
+	fd2 = open(av[4], O_CREAT | O_RDWR | O_TRUNC, 0644);
 	//0644 is permission bit 4=Read, 2=Write, 1=Execute
 	if (fd1 < 0 || fd2 < 0)
 		return (-1);
