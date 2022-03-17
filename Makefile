@@ -27,11 +27,6 @@ $(NAME):		$(OBJS)
 				@make -C $(LIBFT_PATH)
 				@$(CC) $(CFLAGS) $(OBJS) -L$(LIBFT_PATH) -lft -o $(NAME)
 
-
-$(CHECKER):		$(CHECK_OBJS)
-				@$(CC) $(CFLAGS) $(CHECK_OBJS) -L$(LIBFT_PATH) -lft -o $(CHECKER)
-
-
 all:			$(NAME)
 
 clean:
