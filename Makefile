@@ -5,6 +5,7 @@ LIBFT_PATH	=	./libft/
 SRC_PATH	=	./src/
 
 SRCS		=	main.c \
+				pipex.c \
 
 OBJ_PATH	=	./bin/
 
@@ -12,8 +13,7 @@ OBJS		=	$(addprefix $(OBJ_PATH), $(SRCS:.c=.o))
 
 CC			=	gcc
 
-CFLAGS		=	-Wall
-#FIXME: -Wall -Werror -Wextra
+CFLAGS		=	-Wall -Werror -Wextra
 
 CFLAGS_FSAN	=	-Wall -Werror -Wextra -g3 -fsanitize=address
 

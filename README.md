@@ -60,6 +60,20 @@ char *strerror(int errnum);
 
   ```
 
+- Variables in structure to use like "global"
+
+  ```c
+
+  /* */
+  char  **paths;
+  char  **cmds;
+  int   pipe_fd[2];
+  CMD(optionnel)
+
+
+  ```
+
+
 - Environ variable print
 
   ```c
