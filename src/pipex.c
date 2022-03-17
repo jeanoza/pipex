@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 17:20:12 by kychoi            #+#    #+#             */
-/*   Updated: 2022/03/17 18:54:09 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/17 19:00:42 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	execute(char *cmd, t_var *var)
 	}
 }
 
-static void	child_process(int fd1, char *cmd, t_var *var)
+static void	child_process(int fd1, t_var *var)
 {
 	if (dup2(fd1, STDIN_FILENO) < 0)
 		perror("dup2(fd1, STDIN):");
@@ -38,11 +38,11 @@ static void	child_process(int fd1, char *cmd, t_var *var)
 		perror("dup2(pipe[1], STDOUT):");
 	close(var->pipe_fd[PIPE_READ]);
 	close(fd1);
-	execute(cmd, var);
+	execute(var->av[var->cmd_idx], var);
 	exit(1);
 }
 
-static void	parent_process(int fd2, char *cmd, t_var *var)
+static void	parent_process(int fd2, t_var *var)
 {
 	int	status;
 
@@ -53,7 +53,7 @@ static void	parent_process(int fd2, char *cmd, t_var *var)
 		perror("dup2(pipe[0], STDIN):");
 	close(var->pipe_fd[PIPE_WRITE]);
 	close(fd2);
-	execute(cmd, var);
+	execute(var->av[var->cmd_idx + 1], var);
 	exit(1);
 }
 
@@ -75,6 +75,6 @@ void	pipex(int fd1, int fd2, t_var *var)
 		exit(1);
 	}
 	if (pid == 0)
-		child_process(fd1, var->av[var->cmd_idx], var);
-	parent_process(fd2, var->av[var->cmd_idx + 1], var);
+		child_process(fd1, var);
+	parent_process(fd2, var);
 }
