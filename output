@@ -1,3 +1,10 @@
-test1
-test2
-test3
+Makefile
+README.md
+bin
+include
+input
+libft
+output
+pipex
+process.pdf
+src

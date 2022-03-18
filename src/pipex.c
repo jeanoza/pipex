@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kyubongchoi <kyubongchoi@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 17:20:12 by kychoi            #+#    #+#             */
-/*   Updated: 2022/03/17 19:02:07 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/18 12:43:17 by kyubongchoi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ static void	execute(char *cmd, t_var *var)
 {
 	char	**cmd_av_splitted;
 	char	*cmd_with_path;
+	char	*cmd_error_msg;
 	int		i;
 
 	cmd_av_splitted = ft_split(cmd, ' ');
@@ -28,6 +29,10 @@ static void	execute(char *cmd, t_var *var)
 		execve(cmd_with_path, cmd_av_splitted, var->env);
 		free(cmd_with_path);
 	}
+	cmd_error_msg = ft_strjoin("zsh: command not found: ", cmd);
+	write(STDERR_FILENO, cmd_error_msg, ft_strlen(cmd_error_msg));
+	// write(STDERR_FILENO, cmd, ft_strlen(cmd));
+	// perror(cmd);
 }
 
 static void	child_process(int fd1, t_var *var)
