@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/18 15:58:17 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/18 18:26:57 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,10 +87,8 @@ int	main(int ac, char **av, char **env)
 	// 	printf("env[%d]:%s\n", i, env[i]);
 
 
-	// validation_args(ac, av);
-	// init(ac, av, env);
-	char *test = malloc(sizeof(char) * 8);
-	printf("so:%zu\n", sizeof(test));
+	validation_args(ac, av);
+	init(ac, av, env);
 	return (0);
 }
 //TODO: to put in free for paths

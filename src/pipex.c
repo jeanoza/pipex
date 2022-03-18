@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 17:20:12 by kychoi            #+#    #+#             */
-/*   Updated: 2022/03/18 15:53:08 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/18 18:36:01 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,14 @@ static void	execute(char *cmd, t_var *var)
 		cmd_with_path = ft_strjoin(var->paths[i], cmd_av_splitted[0]);
 		//FIXME:programe finish juste after execve..
 		//		=> How && when can I free the thing that i mallocated?
-		// if (execve(cmd_with_path, cmd_av_splitted, var->env) != -1)
-		// {
-		// 	free(cmd_with_path);
-		// 	return ;
-		// }
-		execve(cmd_with_path, cmd_av_splitted, var->env);
+		if (execve(cmd_with_path, cmd_av_splitted, var->env) != -1)
+		{
+			free(cmd_with_path);
+			return ;
+		}
 		free(cmd_with_path);
+		// execve(cmd_with_path, cmd_av_splitted, var->env);
+		// free(cmd_with_path);
 	}
 	cmd_error_msg = ft_strjoin_free_s1(
 			ft_strjoin_free_s1(
