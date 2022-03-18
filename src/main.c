@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kyubongchoi <kyubongchoi@student.42.fr>    +#+  +:+       +#+        */
+/*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/18 13:05:29 by kyubongchoi      ###   ########.fr       */
+/*   Updated: 2022/03/18 15:58:17 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,12 +76,10 @@ static int	init(int ac, char **av, char **env)
 	if (var == NULL)
 		exit(1);
 	if (parsing(env, var) == 1)
-	{
-		printf("shell_print:%s\n", var->shell);
 		pipex(fd1, fd2, var);
-	}
 	return (0);
 }
+
 
 int	main(int ac, char **av, char **env)
 {
@@ -89,8 +87,10 @@ int	main(int ac, char **av, char **env)
 	// 	printf("env[%d]:%s\n", i, env[i]);
 
 
-	validation_args(ac, av);
-	init(ac, av, env);
+	// validation_args(ac, av);
+	// init(ac, av, env);
+	char *test = malloc(sizeof(char) * 8);
+	printf("so:%zu\n", sizeof(test));
 	return (0);
 }
 //TODO: to put in free for paths
