@@ -13,7 +13,7 @@ OBJS		=	$(addprefix $(OBJ_PATH), $(SRCS:.c=.o))
 
 CC			=	gcc
 
-CFLAGS		=	-Wall
+CFLAGS		=	-Wall -g
 
 CFLAGS_FSAN	=	-Wall -Werror -Wextra -g3 -fsanitize=address
 
