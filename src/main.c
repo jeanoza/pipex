@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/20 13:36:58 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/20 16:12:30 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ static void	validation_args(int ac, char **av)
 		write(1, "usage: ./pipex infile \"cmd1\" \"cmd2\" outfile\n", 44);
 		exit (EXIT_FAILURE);
 	}
-	// if (*(av[2]) == 0 || *(av[3]) == 0)
 	if (!(ft_strlen(av[2]) && ft_strlen(av[3])))
 	{
 		write(1, "Error: cmds can't be empty string\n", 34);
@@ -58,12 +57,18 @@ static int	init(int ac, char **av, char **env)
 	t_var	*var;
 	int		fd1;
 	int		fd2;
+	char	*err_msg;
 
 	fd1 = open(av[1], O_RDONLY);
+	if (fd1 == -1)
+	{
+		err_msg = ft_strjoin_free_s1(ft_strjoin(
+					"zsh: no such file or directory:", av[1]), "\n");
+		write(STDERR_FILENO, err_msg, ft_strlen(err_msg));
+		free(err_msg);
+		exit(EXIT_FAILURE);
+	}
 	fd2 = open(av[ac - 1], O_CREAT | O_RDWR | O_TRUNC, 0644);
-	//TODO: find a way to manage if there is no fd1
-	if (fd1 == -1 || fd2 == -1)
-		return (-1);
 	var = malloc(sizeof(t_var));
 	if (var == NULL)
 		exit(EXIT_FAILURE);
@@ -72,18 +77,14 @@ static int	init(int ac, char **av, char **env)
 	var->cmd_idx = 2;
 	if (parsing(env, var) == 1)
 		pipex(fd1, fd2, var);
-	return (0);
+	exit(EXIT_SUCCESS);
 }
 
 
 int	main(int ac, char **av, char **env)
 {
-	// for (int i = 0; env[i]; ++i)
-	// 	printf("env[%d]:%s\n", i, env[i]);
-
 	validation_args(ac, av);
 	init(ac, av, env);
-	exit (EXIT_SUCCESS);
 }
 //TODO: to put in free for paths
 // for (int i = 0; var->paths[i]; ++i)

@@ -6,6 +6,7 @@ SRC_PATH	=	./src/
 
 SRCS		=	main.c \
 				pipex.c \
+				exit.c
 
 OBJ_PATH	=	./bin/
 
