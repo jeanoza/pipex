@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/20 11:43:51 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/20 12:41:12 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,19 +32,12 @@ static int	parsing(char **env, t_var *var)
 	int		i;
 	int		j;
 	char	*path_from_env;
-	int		done;
 
-	done = 0;
 	i = -1;
 	while (env && env[++i])
 	{
-		if (done == 2)
-			return (1);
 		if (ft_strncmp("SHELL=", env[i], 6) == 0)
-		{
 			var->shell = ft_substr(env[i], 11, ft_strlen(env[i]) - 11);
-			done += 1;
-		}
 		if (ft_strncmp("PATH=", env[i], 5) == 0)
 		{
 			path_from_env = ft_substr(env[i], 5, ft_strlen(env[i]) - 5);
@@ -53,9 +46,12 @@ static int	parsing(char **env, t_var *var)
 			while (var->paths && var->paths[++j])
 				var->paths[j] = ft_strjoin_free_s1(var->paths[j], "/");
 			free(path_from_env);
-			done += 1;
 		}
 	}
+	// for (int k = 0; var->paths[k]; ++k)
+	// 	printf("var->paths[%d]:%s\n", k, var->paths[k]);
+	// printf("shell:%s\n", var->shell);
+
 	return (0);
 }
 

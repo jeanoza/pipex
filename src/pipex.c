@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 17:20:12 by kychoi            #+#    #+#             */
-/*   Updated: 2022/03/20 11:41:50 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/20 12:41:52 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void	pipex(int fd1, int fd2, t_var *var)
 	{
 		perror("pipe:");
 		//TODO: free~
-		freeAll(var);
+		// freeAll(var);
 		exit(1);
 	}
 	pid = fork();
@@ -110,7 +110,7 @@ void	pipex(int fd1, int fd2, t_var *var)
 	{
 		perror("Fork:");
 		//TODO: free~
-		freeAll(var);
+		// freeAll(var);
 		exit(1);
 	}
 	if (pid == 0)
