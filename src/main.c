@@ -6,25 +6,44 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/17 18:53:43 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/18 18:26:57 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-//TODO:verify make file CFLAG
-static int	parsing(char **av, char **env, t_var *var)
+static void	validation_args(int ac, char **av)
+{
+	if (ac != 5)
+	{
+		write(1, "usage: ./pipex infile \"cmd1\" \"cmd2\" outfile\n", 44);
+		exit (EXIT_FAILURE);
+	}
+	if (*(av[2]) == 0 || *(av[3]) == 0)
+	{
+		write(1, "Error: cmds can't be empty string\n", 34);
+		exit (EXIT_FAILURE);
+	}
+}
+
+static int	parsing(char **env, t_var *var)
 {
 	int		i;
 	int		j;
 	char	*path_from_env;
+	int		done;
 
-	var->av = av;
-	var->env = env;
-	var->cmd_idx = 2;
+	done = 0;
 	i = -1;
 	while (env && env[++i])
 	{
+		if (done == 2)
+			return (1);
+		if (ft_strncmp("SHELL=", env[i], 6) == 0)
+		{
+			var->shell = ft_substr(env[i], 11, ft_strlen(env[i]) - 11);
+			done += 1;
+		}
 		if (ft_strncmp("PATH=", env[i], 5) == 0)
 		{
 			path_from_env = ft_substr(env[i], 5, ft_strlen(env[i]) - 5);
@@ -33,31 +52,43 @@ static int	parsing(char **av, char **env, t_var *var)
 			while (var->paths && var->paths[++j])
 				var->paths[j] = ft_strjoin_free_s1(var->paths[j], "/");
 			free(path_from_env);
-			return (1);
+			done += 1;
 		}
 	}
 	return (0);
 }
 
-int	main(int ac, char **av, char **env)
+static int	init(int ac, char **av, char **env)
 {
 	t_var	*var;
 	int		fd1;
 	int		fd2;
 
-	//TODO:verify avs...
-	if (ac < 5)
-		exit (1);
 	fd1 = open(av[1], O_RDONLY);
 	fd2 = open(av[ac - 1], O_CREAT | O_RDWR | O_TRUNC, 0644);
 	//TODO: find a way to manage if there is no fd1
 	if (fd1 == -1 || fd2 == -1)
 		return (-1);
 	var = malloc(sizeof(t_var));
+	var->av = av;
+	var->env = env;
+	var->cmd_idx = 2;
 	if (var == NULL)
 		exit(1);
-	if (parsing(av, env, var) == 1)
+	if (parsing(env, var) == 1)
 		pipex(fd1, fd2, var);
+	return (0);
+}
+
+
+int	main(int ac, char **av, char **env)
+{
+	// for (int i = 0; env[i]; ++i)
+	// 	printf("env[%d]:%s\n", i, env[i]);
+
+
+	validation_args(ac, av);
+	init(ac, av, env);
 	return (0);
 }
 //TODO: to put in free for paths

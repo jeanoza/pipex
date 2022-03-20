@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/27 16:50:49 by kychoi            #+#    #+#             */
-/*   Updated: 2022/03/17 12:28:21 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/18 15:57:17 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ char	*ft_strjoin_free_s1(char *s1, const char *s2)
 		result[len] = s1[len];
 		++len;
 	}
-	free(s1);
+	if (s1)
+		free(s1);
 	i = 0;
 	while (s2 && s2[i])
 		result[len++] = s2[i++];

@@ -60,6 +60,46 @@ char *strerror(int errnum);
 
   ```
 
+- Validation args
+
+  ```c
+
+  static void	validation_args(int ac, char **av)
+  {
+    //FIXME: version if i don't do multiple fork()
+    if (ac != 5)
+    {
+      write(1, "usage: ./pipex infile \"cmd1\" \"cmd2\" outfile\n", 44);
+      exit (EXIT_FAILURE);
+    }
+    if (*(av[2]) == 0 || *(av[3]) == 0)
+    {
+      write(1, "Error: cmds can't be empty string\n", 34);
+      exit (EXIT_FAILURE);
+    }
+
+    //FIXME: version multiple fork()
+    int	i;
+
+    if (ac < 5)
+    {
+      write(1, "usage: ./pipex infile \"cmd1\" \"cmd2\" \"[cmd_n...]\" outfile\n", 57);
+      exit (EXIT_FAILURE);
+    }
+    i = 2;
+    while (i < ac - 1)
+    {
+      if (*(av[i]) == 0)
+      {
+        write(1, "Error: cmds can't be empty string\n", 34);
+        exit (EXIT_FAILURE);
+      }
+      ++i;
+    }
+  }
+
+  ```
+
 - Variables in structure to use like "global"
 
   ```c
@@ -72,7 +112,6 @@ char *strerror(int errnum);
 
 
   ```
-
 
 - Environ variable print
 
