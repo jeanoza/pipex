@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 17:20:12 by kychoi            #+#    #+#             */
-/*   Updated: 2022/03/18 18:36:01 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/20 11:41:50 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,16 @@ static void	freeAll(t_var *var)
 		free(var->paths[i]);
 	free(var->shell);
 	free(var);
+}
+
+static void freeSplitted(char **splitted)
+{
+	int	i;
+
+	i = -1;
+	while (splitted && splitted[++i])
+		free(splitted[i]);
+	free(splitted);
 }
 
 static void	execute(char *cmd, t_var *var)
@@ -41,20 +51,18 @@ static void	execute(char *cmd, t_var *var)
 		if (execve(cmd_with_path, cmd_av_splitted, var->env) != -1)
 		{
 			free(cmd_with_path);
+			freeSplitted(cmd_av_splitted);
 			return ;
 		}
 		free(cmd_with_path);
-		// execve(cmd_with_path, cmd_av_splitted, var->env);
-		// free(cmd_with_path);
 	}
 	cmd_error_msg = ft_strjoin_free_s1(
 			ft_strjoin_free_s1(
 				ft_strjoin_free_s1(
 					var->shell, ": command not found: "), cmd), "\n");
 	write(STDERR_FILENO, cmd_error_msg, ft_strlen(cmd_error_msg));
+	freeSplitted(cmd_av_splitted);
 	free(cmd_error_msg);
-	// write(STDERR_FILENO, cmd, ft_strlen(cmd));
-	// perror(cmd);
 }
 
 static void	child_process(int fd1, t_var *var)

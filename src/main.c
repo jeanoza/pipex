@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/18 18:26:57 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/20 11:43:51 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ static void	validation_args(int ac, char **av)
 		write(1, "usage: ./pipex infile \"cmd1\" \"cmd2\" outfile\n", 44);
 		exit (EXIT_FAILURE);
 	}
-	if (*(av[2]) == 0 || *(av[3]) == 0)
+	// if (*(av[2]) == 0 || *(av[3]) == 0)
+	if (!(ft_strlen(av[2]) && ft_strlen(av[3])))
 	{
 		write(1, "Error: cmds can't be empty string\n", 34);
 		exit (EXIT_FAILURE);
