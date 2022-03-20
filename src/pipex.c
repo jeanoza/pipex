@@ -6,12 +6,11 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/17 17:20:12 by kychoi            #+#    #+#             */
-/*   Updated: 2022/03/20 12:41:52 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/20 13:05:21 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
 
 static void	freeAll(t_var *var)
 {

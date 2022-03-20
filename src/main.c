@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/20 12:41:12 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/20 13:36:58 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,8 @@ static int	parsing(char **env, t_var *var)
 			free(path_from_env);
 		}
 	}
-	// for (int k = 0; var->paths[k]; ++k)
-	// 	printf("var->paths[%d]:%s\n", k, var->paths[k]);
-	// printf("shell:%s\n", var->shell);
-
+	if (var->shell && var->paths)
+		return (1);
 	return (0);
 }
 
@@ -67,11 +65,11 @@ static int	init(int ac, char **av, char **env)
 	if (fd1 == -1 || fd2 == -1)
 		return (-1);
 	var = malloc(sizeof(t_var));
+	if (var == NULL)
+		exit(EXIT_FAILURE);
 	var->av = av;
 	var->env = env;
 	var->cmd_idx = 2;
-	if (var == NULL)
-		exit(1);
 	if (parsing(env, var) == 1)
 		pipex(fd1, fd2, var);
 	return (0);
@@ -83,10 +81,9 @@ int	main(int ac, char **av, char **env)
 	// for (int i = 0; env[i]; ++i)
 	// 	printf("env[%d]:%s\n", i, env[i]);
 
-
 	validation_args(ac, av);
 	init(ac, av, env);
-	return (0);
+	exit (EXIT_SUCCESS);
 }
 //TODO: to put in free for paths
 // for (int i = 0; var->paths[i]; ++i)
