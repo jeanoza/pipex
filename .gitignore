@@ -1,3 +1,7 @@
 *.o
 *.a
 libft.a
+
+pipex
+input
+output
