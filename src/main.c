@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/20 16:12:30 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/20 16:17:03 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ static int	init(int ac, char **av, char **env)
 		pipex(fd1, fd2, var);
 	exit(EXIT_SUCCESS);
 }
-
 
 int	main(int ac, char **av, char **env)
 {
