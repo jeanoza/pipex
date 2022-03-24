@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kyubongchoi <kyubongchoi@student.42.fr>    +#+  +:+       +#+        */
+/*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 16:17:24 by kychoi            #+#    #+#             */
-/*   Updated: 2022/03/21 19:59:56 by kyubongchoi      ###   ########.fr       */
+/*   Updated: 2022/03/24 18:20:32 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ static void	parent_process(int fd2, t_var *var)
 	close(var->pipe_fd[PIPE_WRITE]);
 	close(fd2);
 	execute(var->av[var->cmd_idx + 1], var);
+	free_all(var);
 	exit(EXIT_FAILURE);
 }
 
