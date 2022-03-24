@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:43:10 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/20 15:36:50 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/24 22:48:28 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/wait.h>
-# include <sys/errno.h>
 # include <fcntl.h>
 # include "libft.h"
 

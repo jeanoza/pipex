@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/24 20:04:00 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/24 23:45:13 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,12 @@ static int	init(int ac, char **av, char **env)
 	fd1 = open(av[1], O_RDONLY);
 	if (fd1 == -1)
 	{
-		err_msg = ft_strjoin_free_s1(ft_strjoin(
-					"zsh: no such file or directory:", av[1]), "\n");
-		write(STDERR_FILENO, err_msg, ft_strlen(err_msg));
-		free(err_msg);
-		exit(EXIT_FAILURE);
+		//TODO: meme s'il n'y a pas de file, function doit continuer...
+		// err_msg = ft_strjoin_free_s1(ft_strjoin(
+		// 			"zsh: no such file or directory:", av[1]), "\n");
+		// write(STDERR_FILENO, err_msg, ft_strlen(err_msg));
+		// free(err_msg);
+		// exit(EXIT_FAILURE);
 	}
 	fd2 = open(av[ac - 1], O_CREAT | O_RDWR | O_TRUNC, 0644);
 	var = malloc(sizeof(t_var));

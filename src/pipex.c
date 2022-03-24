@@ -6,13 +6,15 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 16:17:24 by kychoi            #+#    #+#             */
-/*   Updated: 2022/03/24 18:20:32 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/24 23:35:39 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	execute(const char *cmd, t_var *var)
+//TODO: create two child and in free in parent!!
+
+static void	execute(char **cmd_av_splitted, t_var *var)
 {
 	char	**cmd_av_splitted;
 	char	*cmd_with_path;
@@ -24,32 +26,35 @@ static void	execute(const char *cmd, t_var *var)
 	while (var->paths[++i])
 	{
 		cmd_with_path = ft_strjoin(var->paths[i], cmd_av_splitted[0]);
-		if (execve(cmd_with_path, cmd_av_splitted, var->env) != -1)
-		{
-			free(cmd_with_path);
-			free_splitted(cmd_av_splitted);
-			return ;
-		}
+		execve(cmd_with_path, cmd_av_splitted, var->env);
 		free(cmd_with_path);
 	}
+	// free_splitted(cmd_av_splitted);
 	cmd_error_msg = ft_strjoin_free_s1(ft_strjoin_free_s1(ft_strjoin(
 					var->shell, ": command not found: "), cmd), "\n");
 	write(STDERR_FILENO, cmd_error_msg, ft_strlen(cmd_error_msg));
-	free_splitted(cmd_av_splitted);
 	free(cmd_error_msg);
-	free_all(var);
 }
 
 static void	child_process(int fd1, t_var *var)
 {
+	char	*cmd_error_msg;
+	char	**cmd_av_splitted;
+
 	if (dup2(fd1, STDIN_FILENO) < 0)
 		perror("dup2(fd1, STDIN):");
 	if (dup2(var->pipe_fd[PIPE_WRITE], STDOUT_FILENO) < 0)
 		perror("dup2(pipe[1], STDOUT):");
 	close(var->pipe_fd[PIPE_READ]);
 	close(fd1);
-	execute(var->av[var->cmd_idx], var);
-	exit(EXIT_FAILURE);
+	if (execute(var->av[var->cmd_idx], var) == -1)
+	{
+		free_splitted(cmd_av_splitted);
+		cmd_error_msg = ft_strjoin_free_s1(ft_strjoin_free_s1(ft_strjoin(
+						var->shell, ": command not found: "), cmd), "\n");
+		write(STDERR_FILENO, cmd_error_msg, ft_strlen(cmd_error_msg));
+		free(cmd_error_msg);
+	}
 }
 
 static void	parent_process(int fd2, t_var *var)
@@ -86,5 +91,8 @@ void	pipex(int fd1, int fd2, t_var *var)
 	else if (pid == 0)
 		child_process(fd1, var);
 	else
+	{
 		parent_process(fd2, var);
+		free_all(var);
+	}
 }
