@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kyubongchoi <kyubongchoi@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 16:17:24 by kychoi            #+#    #+#             */
-/*   Updated: 2022/03/20 16:17:26 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/21 19:59:56 by kyubongchoi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,8 @@ void	pipex(int fd1, int fd2, t_var *var)
 		perror("Fork:");
 		free_all(var);
 	}
-	if (pid == 0)
+	else if (pid == 0)
 		child_process(fd1, var);
-	parent_process(fd2, var);
+	else
+		parent_process(fd2, var);
 }
