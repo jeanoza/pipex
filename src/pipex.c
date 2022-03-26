@@ -6,7 +6,7 @@
 /*   By: kyubongchoi <kyubongchoi@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/26 10:08:16 by kyubongchoi      ###   ########.fr       */
+/*   Updated: 2022/03/26 10:27:36 by kyubongchoi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,7 @@ static void	execute(char *cmd, char **env)
 {
 	char	*path;
 	char	**cmd_splitted;
-	char	*cmd_error_msg;
-
+	
 	cmd_splitted = ft_split(cmd, ' ');
 	path = find_path(env, cmd_splitted[0]);
 	if (path)
@@ -68,10 +67,9 @@ static void	execute(char *cmd, char **env)
 	else
 	{
 		free_splitted(cmd_splitted);
-		cmd_error_msg = ft_strjoin_free_s1(
-				ft_strjoin("zsh: command not found: ", cmd), "\n");
-		write(STDERR_FILENO, cmd_error_msg, ft_strlen(cmd_error_msg));
-		free(cmd_error_msg);
+		write(STDERR_FILENO, "zsh: command not found: ", 24);
+		write(STDERR_FILENO, cmd, ft_strlen(cmd));
+		write(STDERR_FILENO, "\n", 1);
 		exit(1);
 	}
 }
