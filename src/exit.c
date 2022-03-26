@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kyubongchoi <kyubongchoi@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/20 15:32:49 by kychoi            #+#    #+#             */
-/*   Updated: 2022/03/24 20:19:15 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/26 01:40:12 by kyubongchoi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,4 @@ void	free_all(t_var *var)
 	free_splitted(var->paths);
 	free(var->shell);
 	free(var);
-	exit (EXIT_FAILURE);
 }

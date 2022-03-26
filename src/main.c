@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kyubongchoi <kyubongchoi@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/24 23:45:13 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/26 02:00:37 by kyubongchoi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	validation_args(int ac, char **av)
+static int	validation_args(int ac, char **av)
 {
-	if (ac != 5)
+	if (ac < 5)
 	{
-		write(1, "usage: ./pipex infile \"cmd1\" \"cmd2\" outfile\n", 44);
+		write(1, "usage: ./pipex infile \"cmd1\" \"cmd2\" [cmd...] outfile\n", 53);
 		exit (EXIT_FAILURE);
 	}
 	if (!(ft_strlen(av[2]) && ft_strlen(av[3])))
@@ -24,6 +24,7 @@ static void	validation_args(int ac, char **av)
 		write(1, "Error: cmds can't be empty string\n", 34);
 		exit (EXIT_FAILURE);
 	}
+	return (1);
 }
 
 static int	parsing(char **env, t_var *var)
@@ -52,90 +53,86 @@ static int	parsing(char **env, t_var *var)
 	return (0);
 }
 
-static int	init(int ac, char **av, char **env)
+static void	execute(char *cmd, t_var *var)
 {
-	t_var	*var;
-	int		fd1;
-	int		fd2;
-	char	*err_msg;
+	char	**cmd_av_splitted;
+	char	*cmd_with_path;
+	char	*cmd_error_msg;
+	int		i;
 
-	fd1 = open(av[1], O_RDONLY);
-	if (fd1 == -1)
+	cmd_av_splitted = ft_split(cmd, ' ');
+	i = -1;
+	while (var->paths[++i])
 	{
-		//TODO: meme s'il n'y a pas de file, function doit continuer...
-		// err_msg = ft_strjoin_free_s1(ft_strjoin(
-		// 			"zsh: no such file or directory:", av[1]), "\n");
-		// write(STDERR_FILENO, err_msg, ft_strlen(err_msg));
-		// free(err_msg);
-		// exit(EXIT_FAILURE);
+		cmd_with_path = ft_strjoin(var->paths[i], cmd_av_splitted[0]);
+		execve(cmd_with_path, cmd_av_splitted, var->env);
+		free(cmd_with_path);
 	}
-	fd2 = open(av[ac - 1], O_CREAT | O_RDWR | O_TRUNC, 0644);
-	var = malloc(sizeof(t_var));
-	if (var == NULL)
-		exit(EXIT_FAILURE);
-	var->av = av;
-	var->env = env;
-	var->cmd_idx = 2;
-	if (parsing(env, var) == 1)
-		pipex(fd1, fd2, var);
-	exit(EXIT_SUCCESS);
+	free_splitted(cmd_av_splitted);
+	cmd_error_msg = ft_strjoin_free_s1(ft_strjoin(
+				"zsh: command not found: ", cmd), "\n");
+	write(STDERR_FILENO, cmd_error_msg, ft_strlen(cmd_error_msg));
+	free(cmd_error_msg);
+}
+
+static void	redirection(int fd_in, t_var *var, int i)
+{
+	pid_t	pid;
+	int		pipe_fd[2];
+
+	//TODO:protection - perror && free_all(var)
+	pipe(pipe_fd);
+	//TODO:protection - perror && free_all(var)
+	pid = fork();
+	if (pid == 0)
+	{
+		close(pipe_fd[PIPE_READ]);
+		dup2(pipe_fd[PIPE_WRITE], STDOUT_FILENO);
+		if (fd_in == STDIN_FILENO)
+			exit (1);
+		else
+			execute(var->av[i], var);
+	}
+	else
+	{
+		waitpid(-1, NULL, 0);
+		close(pipe_fd[PIPE_WRITE]);
+		dup2(pipe_fd[PIPE_READ], STDIN_FILENO);
+	}
+}
+
+// void	pipex(t_var *var, int ac, char **av, char **env)
+void	pipex(t_var *var)
+{
+	int	fd_in;
+	int	fd_out;
+	int	i;
+
+	fd_in = open(var->av[1], O_RDONLY);
+	fd_out = open(var->av[var->ac - 1], O_CREAT | O_RDWR | O_TRUNC, 0644);
+	dup2(fd_in, STDIN_FILENO);
+	dup2(fd_out, STDOUT_FILENO);
+	redirection(fd_in, var, 2);
+	i = 3;
+	while (i < var->ac - 2)
+		redirection(STDOUT_FILENO, var, i++);
+	execute(var->av[i], var);
 }
 
 int	main(int ac, char **av, char **env)
 {
-	validation_args(ac, av);
-	init(ac, av, env);
+	t_var	*var;
+
+	if (validation_args(ac, av))
+	{
+		var = malloc(sizeof(t_var));
+		if (var == NULL)
+			exit(EXIT_FAILURE);
+		var->ac = ac;
+		var->av = av;
+		var->env = env;
+		if (parsing(env, var) == 1)
+			pipex(var);
+		exit(EXIT_SUCCESS);
+	}
 }
-//TODO: to put in free for paths
-// for (int i = 0; var->paths[i]; ++i)
-// {
-// 	printf("%d:%s\n", i, var->paths[i]);
-// 	free(var->paths[i]);
-// }
-// free(var->paths);
-// free(var);
-
-// #include <sys/wait.h>
-// #include <assert.h>
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <unistd.h>
-// #include <string.h>
-
-// int main(int argc, char *argv[])
-// {
-//     int pipefd[2];
-//     pid_t cpid;
-//     char buf;
-
-//     assert(argc == 2);
-
-//     if (pipe(pipefd) == -1) {
-//         perror("pipe");
-//         exit(EXIT_FAILURE);
-//     }
-
-//     cpid = fork();
-//     if (cpid == -1) {
-//         perror("fork");
-//         exit(EXIT_FAILURE);
-//     }
-
-//     if (cpid == 0) {    /* Le fils lit dans le tube */
-//         close(pipefd[1]);  /* Ferme l'extrémité d'écriture inutilisée */
-
-//         while (read(pipefd[0], &buf, 1) > 0)
-//             write(STDOUT_FILENO, &buf, 1);
-
-//         write(STDOUT_FILENO, "\n", 1);
-//         close(pipefd[0]);
-//         _exit(EXIT_SUCCESS);
-
-//     } else {                    /* Le père écrit argv[1] dans le tube */
-//         close(pipefd[0]);       /* Ferme l'extrémité de lecture inutilisée */
-//         write(pipefd[1], argv[1], strlen(argv[1]));
-//         close(pipefd[1]);       /* Le lecteur verra EOF */
-//         wait(NULL);             /* Attente du fils */
-//         exit(EXIT_SUCCESS);
-//     }
-// }

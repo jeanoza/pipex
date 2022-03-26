@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kyubongchoi <kyubongchoi@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:43:10 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/24 22:48:28 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/26 01:04:42 by kyubongchoi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,14 @@
  * pipe_fd[1] : child process - write
  */
 typedef struct s_var {
-	int		pipe_fd[2];
-	int		cmd_idx;
+	int		ac;
 	char	**env;
 	char	**av;
 	char	**paths;
 	char	*shell;
 }	t_var;
 
-void	pipex(int fd1, int fd2, t_var *var);
+void	pipex(t_var *var);
 void	free_all(t_var *var);
 void	free_splitted(char **splitted);
 

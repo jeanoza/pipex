@@ -8,17 +8,25 @@ int main(void)
 {
 	int pid;
 	int status;
+	int i;
 
-	pid = fork();
-	if (pid == 0)
+	i = 0;
+	printf("start getpid():%d\n", getpid());
+	for (i = 0; i < 10;++i)
 	{
-		printf("child\n");
-	}
-	else
-	{
-		waitpid(-1, &status, 0);
-		printf("parent\n");
-		exit(1);
+		pid = fork();
+		if (pid == 0)
+		{
+			printf("child getpid():%d - i:%d\n", getpid(), i);
+			exit(1);
+		}
+		if (pid > 0)
+		{
+			waitpid(-1, &status, 0);
+			// wait(NULL);
+			printf("(status:%d)parent pid:%d getpid():%d - i:%d\n", status, pid, getpid(), i);
+
+		}
 	}
 	printf("out");
 

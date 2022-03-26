@@ -209,9 +209,54 @@ char *strerror(int errnum);
    */
   pid_t waitpid(pid_t pid, int *stat_loc, int options);
 
-
-
   ```
+
+  - test code
+
+    ```c
+    int main(void)
+    {
+      int pid;
+      int status;
+      int i;
+
+      i = 0;
+      printf("start getpid():%d\n", getpid());
+      for (i = 0; i < 10;++i)
+      {
+        pid = fork();
+        if (pid == 0)
+        {
+          printf("child getpid():%d - i:%d\n", getpid(), i);
+          exit(1);
+        }
+      }
+      if (pid > 0)
+      {
+        waitpid(-1, &status, 0);
+        printf("parent pid:%d getpid():%d - i:%d\n", pid, getpid(), i);
+        exit(99);
+
+      }
+      printf("out");
+
+      return (0);
+
+      //start getpid():49722
+      //child getpid():49723 - i:0
+      //child getpid():49724 - i:1
+      //child getpid():49725 - i:2
+      //child getpid():49726 - i:3
+      //child getpid():49727 - i:4
+      //child getpid():49728 - i:5
+      //child getpid():49729 - i:6
+      //child getpid():49730 - i:7
+      //child getpid():49731 - i:8
+      //parent pid:49732 getpid():49722 - i:10 !! important -> that (i == 10 && pid == 49732) means parent execute after last child!
+      //child getpid():49732 - i:9
+    }
+
+    ```
 
 - `dup2()`
 
