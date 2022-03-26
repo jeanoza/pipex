@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kyubongchoi <kyubongchoi@student.42.fr>    +#+  +:+       +#+        */
+/*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/26 10:34:43 by kyubongchoi      ###   ########.fr       */
+/*   Updated: 2022/03/26 12:50:00 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static void	execute(char *cmd, char **env)
 {
 	char	*path;
 	char	**cmd_splitted;
-	
+
 	cmd_splitted = ft_split(cmd, ' ');
 	path = find_path(env, cmd_splitted[0]);
 	if (path)
@@ -79,11 +79,13 @@ static void	redirection(int fd_in, char *cmd, char **env)
 	pid_t	pid;
 	int		pipe_fd[2];
 
-	if (pipe(pipe_fd) == -1)
-		perror_exit("pipe: ");
+	// if (pipe(pipe_fd) == -1)
+	// 	perror_exit("pipe: ");
+	// pid = fork();
+	// if (pid == -1)
+	// 	perror_exit("fork: ");
+	pipe(pipe_fd);
 	pid = fork();
-	if (pid == -1)
-		perror_exit("fork: ");
 	if (pid == 0)
 	{
 		close(pipe_fd[PIPE_READ]);
