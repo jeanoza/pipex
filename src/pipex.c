@@ -6,7 +6,7 @@
 /*   By: kyubongchoi <kyubongchoi@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/26 10:27:36 by kyubongchoi      ###   ########.fr       */
+/*   Updated: 2022/03/26 10:34:43 by kyubongchoi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,15 @@ int	main(int ac, char **av, char **env)
 
 	if (validation_args(ac, av))
 	{
-		fd_in = open(av[1], O_RDONLY);
+		if (access(av[1], F_OK) == 0)
+			fd_in = open(av[1], O_RDONLY);
+		else
+		{
+			write(STDERR_FILENO, "zsh: no such file or directory: ", 32);
+			write(STDERR_FILENO, av[1], ft_strlen(av[1]));
+			write(STDERR_FILENO, "\n", 1);
+			fd_in = STDIN_FILENO;
+		}
 		fd_out = open(av[ac - 1], O_CREAT | O_RDWR | O_TRUNC, 0644);
 		dup2(fd_in, STDIN_FILENO);
 		dup2(fd_out, STDOUT_FILENO);
