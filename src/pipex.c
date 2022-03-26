@@ -6,7 +6,7 @@
 /*   By: kychoi <kychoi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:44:51 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/26 12:50:00 by kychoi           ###   ########.fr       */
+/*   Updated: 2022/03/26 12:58:08 by kychoi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,13 +79,11 @@ static void	redirection(int fd_in, char *cmd, char **env)
 	pid_t	pid;
 	int		pipe_fd[2];
 
-	// if (pipe(pipe_fd) == -1)
-	// 	perror_exit("pipe: ");
-	// pid = fork();
-	// if (pid == -1)
-	// 	perror_exit("fork: ");
-	pipe(pipe_fd);
+	if (pipe(pipe_fd) == -1)
+		perror_exit("pipe: ");
 	pid = fork();
+	if (pid == -1)
+		perror_exit("fork: ");
 	if (pid == 0)
 	{
 		close(pipe_fd[PIPE_READ]);
