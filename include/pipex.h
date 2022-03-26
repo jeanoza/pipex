@@ -6,7 +6,7 @@
 /*   By: kyubongchoi <kyubongchoi@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/05 10:43:10 by kyubongchoi       #+#    #+#             */
-/*   Updated: 2022/03/26 02:55:04 by kyubongchoi      ###   ########.fr       */
+/*   Updated: 2022/03/26 10:05:23 by kyubongchoi      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,5 @@
 
 void	free_splitted(char **splitted);
 void	perror_exit(const char *msg);
-char	**get_paths(char **env);
 
 #endif
